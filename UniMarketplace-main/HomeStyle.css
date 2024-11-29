@@ -1,0 +1,329 @@
+﻿/*import font style*/
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'spartan', sans-serif;
+}
+
+h1{
+    font-size: 50px;
+    line-height: 64px;
+    color: #222;
+}
+h2 {
+    font-size: 46px;
+    line-height: 54px;
+    color: #222;
+}
+h4 {
+    font-size: 20px;
+    color: #222;
+}
+
+h6 {
+    font-weight: 700;
+    font-size: 12px;
+
+}
+p {
+    font-size: 16px;
+   color: #465b52;
+    margin: 15px 0 20px 0;
+}
+
+.section-p1{
+    padding: 40px 80px;
+
+}
+
+/*header start*/
+#header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 80px;
+    bacKground: #ffffff;
+    box-shadow: 0 5px 15px #1a1a1a;
+    z-index: 999;
+    position: sticky;
+    top: 0;
+    left: 0;
+}
+
+#navbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+/*list the links*/
+#navbar li {
+    list-style: none;
+    padding: 0 20px;
+    position: relative;
+}
+
+/*remove the underline from the links*/
+    #navbar li a {
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 600;
+        color: #1a1a1a;
+        transition: 0.4s ease;
+    }
+
+/*Adds a hover effects to the links*/
+        #navbar li a:hover,
+        #navbar li a.active{
+            color: #0059f8;
+        }
+
+/*Adds underline effect under the links*/
+            #navbar li a.active::after,
+            #navbar li a:hover::after {
+                content: "";
+                width: 30%;
+                height: 2px;
+                background: #0059f8;
+                position: absolute;
+                bottom: -4px;
+                left: 20px;
+            }
+
+
+
+  /*Home page*/
+#hero{
+    background-image: url("");
+    height: 90vh;
+    width: 100%;
+    background-size: cover;
+    background-position: top 25% right 0;
+    padding: 0 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+
+
+}
+/*Decorate text*/
+#hero h4{
+    padding-bottom: 15px;
+}
+
+ #hero h1 {
+        color: #0059f8;
+ }
+
+    #hero button {
+        background-color: transparent;
+        color: #0059f8;
+        border: 0;
+        line-height: 3;
+        text-transform: uppercase;
+    }
+
+    /*Aling boxes in one row*/
+#feature{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+#feature .fe-box {
+    width: 180px;
+    text-align: center;
+    padding: 25px 15px;
+    box-shadow: 20px 20px 34px #222;
+    border: 1px solid #ffffff;
+    border-radius: 4px;
+    margin: 15px 0;
+}
+/*Reduse box shadows*/
+    #feature .fe-box:hover {
+        box-shadow: 10px 10px 54px #222;
+    }
+
+    #feature .fe-box img{
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    /*Change taxt color in the boxes*/
+    #feature .fe-box h6 {
+        display: inline-block;
+        padding: 9px 8px 6px 8px;
+        line-height: 1;
+        border-radius: 4px;
+        color: #0059f8;
+        background-color: #fddde4;
+    }
+
+
+
+
+
+
+
+
+/* search bar implementation*/
+
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 20px;
+        align-items: center;
+        background-color: #fff; /* or your chosen background color */
+     
+    }
+    
+    .nav-left {
+        display: flex;
+        align-items: center;
+    }
+    
+    .search-bar {
+        display: flex;
+        align-items: center;
+        border: 1px solid #ddd;
+        padding: 5px;
+        border-radius: 20px;
+    }
+    
+    .search-bar input[type="text"] {
+        border: none;
+        outline: none;
+        padding: 5px 10px;
+        font-size: 14px;
+    }
+    
+    .search-bar button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        margin-left: 5px;
+    }
+    
+    .nav-right a {
+        text-decoration: none;
+        color: black;
+        margin: 0 10px;
+    }
+    
+    .nav-right a.active {
+        font-weight: bold;
+        color: blue;
+    }
+    
+
+/* Style for the search bar at the top left */
+.search-bar-top-left {
+    position: fixed;
+    top: 10px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.search-bar-top-left input[type="text"] {
+    border: none;
+    outline: none;
+    padding: 5px 10px;
+    font-size: 14px;
+    width: 150px; /* Initial width */
+    transition: width 0.3s ease; /* Smooth transition */
+}
+
+/* When the input is focused, expand the width */
+.search-bar-top-left input[type="text"]:focus {
+    width: 250px; /* Expanded width on focus */
+}
+
+.search-bar-top-left button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 5px;
+}
+
+
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background-color: #f8f9fa;
+    padding: 10px 20px;
+    position: relative;
+}
+
+
+
+
+
+
+
+/* Header and Navbar Styling */
+#header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 80px;
+    background: #ffffff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    position: sticky;
+    top: 0;
+    left: 0;
+}
+
+
+
+#navbar {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    margin-right: 50px; /* Add space between navbar links and the "Sell" button */
+}
+
+#navbar li {
+    margin-right: 20px; /* Spacing between individual links */
+}
+
+.nav-right {
+    margin-left: auto; /* Push the "Sell" button to the far right */
+}
+
+.sell-button {
+    padding: 10px 20px;
+    background-color: #0059f8;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sell-button:hover {
+    background-color: #0044c9;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+

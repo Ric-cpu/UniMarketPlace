@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sell an Item</title>
+  <link rel="stylesheet" href="SellPage.css">
+</head>
+<body>
+  <header>
+    <h1>Sell an Item</h1>
+  </header>
+  <section id="header">
+    <nav class="navbar">
+      <div class="nav-right">
+        <a href="Home.html" class="sell-button">Back</a>
+    </div>
+</nav>
+  </section>
+  <main>
+    <form action="/upload" method="POST" enctype="multipart/form-data" class="sell-form">
+      <label for="item-image">Item Image:</label>
+      <input type="file" id="item-image" name="item-image" accept="image/*" required>
+      
+      <label for="item-name">Item Name:</label>
+      <input type="text" id="item-name" name="item-name" placeholder="Enter item name" required>
+      
+      <label for="item-price">Price:</label>
+      <input type="number" id="item-price" name="item-price" placeholder="Enter price" required>
+      
+      <label for="item-description">Item Description:</label>
+      <textarea id="item-description" name="item-description" rows="5" placeholder="Enter a detailed description" required></textarea>
+      
+      <button type="submit" class="submit-button">Upload Item</button>
+    </form>
+  </main>
+</body>
+</html>
