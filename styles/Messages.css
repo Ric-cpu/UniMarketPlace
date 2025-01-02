@@ -1,0 +1,98 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'League Spartan', sans-serif;
+}
+
+/* Header Styling */
+#main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo img {
+    max-height: 50px;
+}
+
+.navbar ul {
+    display: flex;
+    list-style: none;
+    gap: 15px;
+}
+
+.navbar ul li a {
+    text-decoration: none;
+    color: #0059f8;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.navbar ul li a.active {
+    text-decoration: underline;
+}
+
+.sell-button {
+    padding: 5px 10px;
+    border: 1px solid #0059f8;
+    background-color: #0059f8;
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.sell-button:hover {
+    background-color: #0044c9;
+}
+
+/* Messages Section */
+#messages {
+    padding: 20px 50px;
+    text-align: center;
+}
+
+#messages h1 {
+    font-size: 24px;
+    color: #0059f8;
+    margin-bottom: 20px;
+}
+
+.message-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.message {
+    width: 300px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.message h3 {
+    font-size: 16px;
+    color: #222;
+    margin-bottom: 5px;
+}
+
+.message p {
+    font-size: 14px;
+    color: #606063;
+}
+
+.empty-state {
+    font-size: 16px;
+    color: #606063;
+    margin-top: 20px;
+}

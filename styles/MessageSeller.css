@@ -1,0 +1,116 @@
+/* MessageSeller.css */
+
+/* Reset some default browser styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5; /* Light grey background */
+    color: #333; /* Dark grey text */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Header Styling */
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    color: #0059f8; /* Blue color */
+    text-align: center;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #555; /* Medium grey */
+    text-align: center;
+}
+
+/* Form Styling */
+form {
+    background-color: #fff; /* White background */
+    padding: 25px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+}
+
+/* Label Styling */
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 1em;
+    color: #333;
+}
+
+/* Textarea Styling */
+textarea#message {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: vertical;
+    font-size: 1em;
+    font-family: inherit;
+    margin-bottom: 20px;
+    transition: border-color 0.3s;
+}
+
+textarea#message:focus {
+    border-color: #0059f8; /* Blue border on focus */
+    outline: none;
+}
+
+/* Submit Button Styling */
+button[type="submit"] {
+    background-color: #0059f8; /* Blue background */
+    color: #fff; /* White text */
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 100%;
+}
+
+button[type="submit"]:hover {
+    background-color: #0041c2; /* Darker blue on hover */
+}
+
+button[type="submit"]:active {
+    transform: scale(0.98); /* Slightly shrink on click */
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    form {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    h2 {
+        font-size: 1.2em;
+    }
+
+    button[type="submit"] {
+        padding: 10px 15px;
+        font-size: 0.95em;
+    }
+}
