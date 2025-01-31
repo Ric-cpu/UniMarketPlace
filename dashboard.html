@@ -66,46 +66,6 @@
             font-weight: 600;
         }
 
-
-
-          /* Categories */
-      .categories-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .category-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            padding: 20px;
-            width: 150px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: 0.3s ease-in-out;
-            cursor: pointer;
-        }
-
-        .category-card:hover {
-            background-color: #007bff;
-            color: white;
-            transform: translateY(-5px);
-        }
-
-        .category-card i {
-            font-size: 2rem;
-            margin-bottom: 8px;
-            color: #007bff;
-        }
-
-        .category-card:hover i {
-            color: white;
-        }
-
     </style>
 
 
@@ -154,15 +114,13 @@
                             <li><a class="dropdown-item" href="profile.html">Profile</a></li>
                             <li><a class="dropdown-item" href="settings.html">Settings</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="handlers/logout_handler.php">Logout</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="handleLogout(); return false;">Logout</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
     </nav>
-
-
 
     <!-- Main Content -->
     <div class="container py-4">
@@ -188,27 +146,6 @@
             </div>
         </div>
 
-        <!-- Categories -->
-<h2 class="text-center mb-4">Browse by Category</h2>
-<div class="categories-container">
-    <div class="category-card" onclick="applyCategoryFilter('electronics')">
-        <i class="fas fa-laptop"></i>
-        <h6>Electronics</h6>
-    </div>
-    <div class="category-card" onclick="applyCategoryFilter('textbooks')">
-        <i class="fas fa-book"></i>
-        <h6>Textbooks</h6>
-    </div>
-    <div class="category-card" onclick="applyCategoryFilter('furniture')">
-        <i class="fas fa-couch"></i>
-        <h6>Furniture</h6>
-    </div>
-    <div class="category-card" onclick="applyCategoryFilter('clothing')">
-        <i class="fas fa-tshirt"></i>
-        <h6>Clothing</h6>
-    </div>
-</div>
-
         <!-- Recent Listings Section -->
         <div class="mb-4">
             <h2 class="mb-3">Recent Listings</h2>
@@ -230,8 +167,6 @@
             </ul>
         </nav>
     </div>
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -332,18 +267,10 @@
         }
 
         // Event Listeners
-        document.getElementById('searchButton').addEventListener('click', function() {
-            const searchQuery = document.getElementById('searchInput').value;
-            if (searchQuery) {
-                window.location.href = `search-results.html?q=${encodeURIComponent(searchQuery)}`;
-            }
-        });
+        document.getElementById('searchButton').addEventListener('click', () => loadListings(1));
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                const searchQuery = this.value;
-                if (searchQuery) {
-                    window.location.href = `search-results.html?q=${encodeURIComponent(searchQuery)}`;
-                }
+                loadListings(1);
             }
         });
         document.getElementById('categoryFilter').addEventListener('change', () => loadListings(1));
@@ -392,6 +319,17 @@
                     }
                 })
                 .catch(error => console.error('Error loading recent listings:', error));
+        }
+
+        function handleLogout() {
+            fetch('handlers/logout_handler.php')
+                .then(() => {
+                    window.location.href = 'index.html';
+                })
+                .catch(error => {
+                    console.error('Logout error:', error);
+                    window.location.href = 'index.html'; // Redirect anyway in case of error
+                });
         }
     </script>
 </body>
