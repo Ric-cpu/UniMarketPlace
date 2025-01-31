@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Student Marketplace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #007bff;
+        } 
+        .chat-container {
+            height: 75vh;
+            display: flex;
+        }
+        .conversations-list {
+            width: 300px;
+            border-right: 1px solid #dee2e6;
+            overflow-y: auto;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .message-history {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .message-input {
+            border-top: 1px solid #dee2e6;
+            padding: 15px;
+        }
+        .conversation-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #dee2e6;
+            cursor: pointer;
+        }
+        .conversation-item:hover {
+            background-color: #f8f9fa;
+        }
+        .conversation-item.active {
+            background-color: #e9ecef;
+        }
+        .message-bubble {
+            max-width: 75%;
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            border-radius: 15px;
+        }
+        .message-sent {
+            background-color: #007bff;
+            color: white;
+            margin-left: auto;
+        }
+        .message-received {
+            background-color: #e9ecef;
+            margin-right: auto;
+        }
+        .unread {
+            font-weight: bold;
+        }
+        .timestamp {
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="dashboard.html">Student Marketplace</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="my-listings.html">My Listings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="messages.html">Messages</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        <div class="chat-container">
+            <!-- Conversations List -->
+            <div class="conversations-list" id="conversationsList">
+                <!-- Conversations will be loaded here -->
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages">
+                <div class="message-history" id="messageHistory">
+                    <!-- Messages will be loaded here -->
+                </div>
+                <div class="message-input">
+                    <form id="messageForm" class="d-flex gap-2">
+                        <input type="text" class="form-control" id="messageInput" placeholder="Type your message..." required>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentConversation = null;
+        let lastMessageId = 0;
+
+        // Modify the DOMContentLoaded event listener
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sellerId = urlParams.get('seller_id');
+            const itemId = urlParams.get('item_id');
+            
+            if (sellerId && itemId) {
+                // Initialize the conversation
+                fetch(`handlers/init_conversation.php?seller_id=${sellerId}&item_id=${itemId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            currentConversation = {
+                                userId: parseInt(sellerId),
+                                itemId: parseInt(itemId)
+                            };
+                            
+                            // Add new conversation to the list
+                            const div = document.createElement('div');
+                            div.className = 'conversation-item active';
+                            div.dataset.userId = sellerId;
+                            div.dataset.itemId = itemId;
+                            div.innerHTML = `
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <strong>${data.conversation.seller_name}</strong>
+                                    <small class="text-muted">Item: ${data.conversation.item_name}</small>
+                                </div>
+                                <div class="text-muted">Start a conversation</div>
+                            `;
+                            
+                            // Add to conversations list
+                            const conversationsList = document.getElementById('conversationsList');
+                            conversationsList.insertBefore(div, conversationsList.firstChild);
+                            
+                            // Initialize empty message history
+                            const messageHistory = document.getElementById('messageHistory');
+                            messageHistory.innerHTML = `
+                                <div class="text-center text-muted p-3">
+                                    No messages yet. Start the conversation!
+                                </div>
+                            `;
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+            
+            // Load existing conversations
+            loadConversations();
+        });
+
+        // Modify loadConversations to preserve new conversations
+        function loadConversations() {
+            return fetch('handlers/get_conversations.php')
+                .then(response => response.json())
+                .then(data => {
+                    const conversationsList = document.getElementById('conversationsList');
+                    // Store any active conversation details
+                    const activeConversation = currentConversation;
+                    
+                    console.log('Current conversation:', activeConversation); // Debug log
+                    
+                    conversationsList.innerHTML = '';
+                    
+                    if (data.success && Array.isArray(data.conversations)) {
+                        let foundActive = false;
+                        
+                        data.conversations.forEach(conv => {
+                            const div = document.createElement('div');
+                            const isActive = activeConversation && 
+                                           parseInt(conv.other_user_id) === activeConversation.userId && 
+                                           parseInt(conv.item_id) === activeConversation.itemId;
+                            
+                            div.className = `conversation-item ${conv.has_unread ? 'unread' : ''} ${isActive ? 'active' : ''}`;
+                            div.dataset.userId = conv.other_user_id;
+                            div.dataset.itemId = conv.item_id;
+                            
+                            if (isActive) {
+                                foundActive = true;
+                            }
+                            
+                            div.onclick = () => {
+                                document.querySelectorAll('.conversation-item').forEach(item => {
+                                    item.classList.remove('active');
+                                });
+                                div.classList.add('active');
+                                loadMessages(conv.other_user_id, conv.item_id);
+                            };
+                            
+                            div.innerHTML = `
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <strong>${conv.other_user_name || 'Unknown'} ${conv.other_user_lastname || ''}</strong>
+                                    <small class="text-muted">Item: ${conv.item_name || 'Unknown Item'}</small>
+                                </div>
+                                <div class="text-truncate ${conv.has_unread ? 'fw-bold' : 'text-muted'}">
+                                    ${conv.last_message || 'No messages yet'}
+                                </div>
+                            `;
+                            conversationsList.appendChild(div);
+                        });
+                        
+                        // If we have an active conversation that wasn't in the list, add it
+                        if (activeConversation && !foundActive) {
+                            console.log('Adding new conversation to list'); // Debug log
+                            fetch(`handlers/init_conversation.php?seller_id=${activeConversation.userId}&item_id=${activeConversation.itemId}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        const div = document.createElement('div');
+                                        div.className = 'conversation-item active';
+                                        div.dataset.userId = activeConversation.userId;
+                                        div.dataset.itemId = activeConversation.itemId;
+                                        
+                                        div.onclick = () => {
+                                            document.querySelectorAll('.conversation-item').forEach(item => {
+                                                item.classList.remove('active');
+                                            });
+                                            div.classList.add('active');
+                                            loadMessages(activeConversation.userId, activeConversation.itemId);
+                                        };
+                                        
+                                        div.innerHTML = `
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <strong>${data.conversation.seller_name}</strong>
+                                                <small class="text-muted">Item: ${data.conversation.item_name}</small>
+                                            </div>
+                                            <div class="text-muted">Start a conversation</div>
+                                        `;
+                                        
+                                        conversationsList.insertBefore(div, conversationsList.firstChild);
+                                    }
+                                });
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading conversations:', error);
+                    const conversationsList = document.getElementById('conversationsList');
+                    conversationsList.innerHTML = `
+                        <div class="text-center text-danger p-3">
+                            Error loading conversations
+                        </div>
+                    `;
+                });
+        }
+
+        // Load messages for a conversation
+        function loadMessages(userId, itemId) {
+            currentConversation = {
+                userId: parseInt(userId),
+                itemId: parseInt(itemId)
+            };
+            
+            const messageHistory = document.getElementById('messageHistory');
+            
+            fetch(`handlers/get_messages.php?user_id=${userId}&item_id=${itemId}`)
+                .then(response => response.json())
+                .then(data => {
+                    messageHistory.innerHTML = '';
+                    
+                    if (data.success) {
+                        if (data.messages.length === 0) {
+                            messageHistory.innerHTML = `
+                                <div class="text-center text-muted p-3">
+                                    No messages yet. Start the conversation!
+                                </div>
+                            `;
+                        } else {
+                            data.messages.forEach(msg => {
+                                const div = document.createElement('div');
+                                div.className = `message-bubble ${msg.is_sender == 1 ? 'message-sent' : 'message-received'}`;
+                                div.innerHTML = `
+                                    ${msg.message}
+                                    <div class="timestamp">${new Date(msg.created_at).toLocaleTimeString()}</div>
+                                `;
+                                messageHistory.appendChild(div);
+                            });
+                        }
+                        messageHistory.scrollTop = messageHistory.scrollHeight;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    messageHistory.innerHTML = `
+                        <div class="text-center text-danger p-3">
+                            Error loading messages
+                        </div>
+                    `;
+                });
+        }
+
+        // Send message
+        document.getElementById('messageForm').onsubmit = function(e) {
+            e.preventDefault();
+            if (!currentConversation) {
+                console.error('No active conversation');
+                return;
+            }
+
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // Debug log
+            console.log('Sending message:', {
+                receiver_id: parseInt(currentConversation.userId),
+                item_id: parseInt(currentConversation.itemId),
+                message: message
+            });
+
+            fetch('handlers/send_message.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    receiver_id: parseInt(currentConversation.userId),
+                    item_id: parseInt(currentConversation.itemId),
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Server response:', data);
+                if (data.success) {
+                    input.value = ''; // Clear input
+                    loadMessages(currentConversation.userId, currentConversation.itemId);
+                } else {
+                    alert('Failed to send message: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error sending message:', error);
+                alert('Error sending message. Please try again.');
+            });
+        };
+
+        // Check for new messages periodically
+        function checkNewMessages() {
+            if (!currentConversation) return;
+
+            fetch(`handlers/check_new_messages.php?user_id=${currentConversation.userId}&item_id=${currentConversation.itemId}&last_id=${lastMessageId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.new_messages) {
+                        loadMessages(currentConversation.userId, currentConversation.itemId);
+                    }
+                });
+        }
+
+        // Initial load
+        loadConversations();
+
+        // Poll for new messages every 3 seconds
+        setInterval(checkNewMessages, 3000);
+        
+        // Reduce the frequency of conversation list refresh
+        clearInterval(window.conversationInterval); // Clear any existing interval
+        window.conversationInterval = setInterval(loadConversations, 30000); // Check every 30 seconds instead of 10
+    </script>
+</body>
+</html> 

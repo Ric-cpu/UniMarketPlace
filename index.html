@@ -1,0 +1,433 @@
+<?php
+session_start();
+if (isset($_SESSION['user_id'])) {
+    header("Location: dashboard.php");
+    exit();
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Marketplace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9fafb;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #007bff;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #007bff;
+        }
+
+        .navbar-nav .nav-link {
+            font-weight: 500;
+            color: #333;
+            margin: 0 0.75rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .navbar-nav .nav-link.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #007bff, #00bfff);
+            color: #fff;
+            padding: 6rem 0;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-section p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .hero-section .btn {
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hero-section .btn-primary {
+            background-color: #fff;
+            color: #007bff;
+            border: none;
+        }
+
+        .hero-section .btn-outline-light {
+            border: 2px solid #fff;
+            color: #fff;
+            background-color: transparent;
+        }
+
+        .hero-section .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Floating Items Animation */
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) translateX(20px) rotate(10deg);
+            }
+            100% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+            }
+        }
+
+            /* General Styles */
+    .floating-items {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 2; /* Place above the hero section */
+        pointer-events: none; /* Prevent interaction */
+    }
+
+    .floating-item {
+        position: absolute;
+        font-size: 2rem;
+        color: rgba(0, 123, 255, 0.8); /* Default light blue */
+        animation: float 10s infinite ease-in-out;
+        transition: color 0.3s ease; /* Smooth color change */
+    }
+
+    /* Change color when floating items overlap the hero section */
+    .floating-item.overlapping {
+        color: #ffffff; /* White when overlapping */
+    }
+
+    .hero-section {
+        position: relative;
+        z-index: 1; /* Place behind floating items */
+    }
+
+        /* Adjust positions and animation durations for each item */
+        .floating-item:nth-child(1) {
+            top: 10%;
+            left: 5%;
+            animation-duration: 12s;
+        }
+
+        .floating-item:nth-child(2) {
+            top: 20%;
+            left: 80%;
+            animation-duration: 15s;
+        }
+
+        .floating-item:nth-child(3) {
+            top: 50%;
+            left: 20%;
+            animation-duration: 10s;
+        }
+
+        .floating-item:nth-child(4) {
+            top: 70%;
+            left: 60%;
+            animation-duration: 14s;
+        }
+
+        .floating-item:nth-child(5) {
+            top: 40%;
+            left: 90%;
+            animation-duration: 11s;
+        }
+
+        .floating-item:nth-child(6) {
+            top: 80%;
+            left: 10%;
+            animation-duration: 13s;
+        }
+
+        .floating-item:nth-child(7) {
+            top: 30%;
+            left: 50%;
+            animation-duration: 16s;
+        }
+
+        .floating-item:nth-child(8) {
+            top: 60%;
+            left: 30%;
+            animation-duration: 9s;
+        }
+
+        .floating-item:nth-child(9) {
+            top: 15%;
+            left: 70%;
+            animation-duration: 12s;
+        }
+
+        .floating-item:nth-child(10) {
+            top: 85%;
+            left: 40%;
+            animation-duration: 14s;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #ffffff;
+            padding: 2rem 0;
+            margin-top: 4rem;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+
+        footer a {
+            color: #007bff;
+            margin: 0 0.5rem;
+            font-size: 1.25rem;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #0056b3;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+
+            .hero-section p {
+                font-size: 1rem;
+            }
+
+            .hero-section .btn {
+                width: 100%;
+                margin: 0.5rem 0;
+            }
+
+            .navbar-nav .nav-link {
+                margin: 0.25rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Items Background -->
+    <div class="floating-items">
+        <div class="floating-item"><i class="fas fa-laptop"></i></div>
+        <div class="floating-item"><i class="fas fa-book"></i></div>
+        <div class="floating-item"><i class="fas fa-tshirt"></i></div>
+        <div class="floating-item"><i class="fas fa-mobile-alt"></i></div>
+        <div class="floating-item"><i class="fas fa-chair"></i></div>
+        <div class="floating-item"><i class="fas fa-bicycle"></i></div>
+        <div class="floating-item"><i class="fas fa-headphones"></i></div>
+        <div class="floating-item"><i class="fas fa-coffee"></i></div>
+        <div class="floating-item"><i class="fas fa-gamepad"></i></div>
+        <div class="floating-item"><i class="fas fa-shoe-prints"></i></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Student Marketplace</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Browse</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Sell</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4 mb-4">Welcome to Student Marketplace</h1>
+            <p class="lead mb-4">Buy and sell items with your fellow students</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="login.html" class="btn btn-primary btn-lg">Start Shopping</a>
+                <a href="login.html" class="btn btn-outline-light btn-lg">Sell an Item</a>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentPage = 1;
+        let currentSearch = '';
+
+        function loadListings(page = 1, search = '') {
+            const url = `handlers/get_listings.php?page=${page}&search=${encodeURIComponent(search)}`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const listingsContainer = document.querySelector('.row.g-4');
+                    listingsContainer.innerHTML = ''; // Clear existing listings
+
+                    data.items.forEach(item => {
+                        const card = createListingCard(item);
+                        listingsContainer.innerHTML += card;
+                    });
+
+                    updatePagination(data.pagination);
+                })
+                .catch(error => console.error('Error loading listings:', error));
+        }
+
+        function createListingCard(item) {
+            return `
+                <div class="col-md-3 mb-4">
+                    <div class="card item-card h-100">
+                        <img src="${item.image || 'placeholder.jpg'}" class="card-img-top" alt="${item.name}">
+                        <div class="card-body">
+                            <h5 class="card-title">${item.name}</h5>
+                            <p class="card-text text-truncate">${item.description}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 mb-0">£${parseFloat(item.price).toFixed(2)}</span>
+                                <button class="btn btn-primary btn-sm" onclick="viewItem(${item.id})">View Details</button>
+                            </div>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <small>Listed by ${item.first_name}</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updatePagination(pagination) {
+            // Add pagination HTML here if needed
+        }
+
+        // Search functionality
+        const searchInput = document.querySelector('input[type="text"]');
+        const searchButton = searchInput.nextElementSibling;
+
+        searchButton.addEventListener('click', () => {
+            currentSearch = searchInput.value;
+            currentPage = 1;
+            loadListings(currentPage, currentSearch);
+        });
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                currentSearch = searchInput.value;
+                currentPage = 1;
+                loadListings(currentPage, currentSearch);
+            }
+        });
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadListings();
+        });
+
+
+          // JavaScript to detect overlap and dynamically change item colors
+    document.addEventListener('DOMContentLoaded', () => {
+        const floatingItems = document.querySelectorAll('.floating-item');
+        const heroSection = document.querySelector('.hero-section');
+
+        // Get the hero section's bounding box for overlap detection
+        const heroRect = heroSection.getBoundingClientRect();
+
+        // Function to check overlap
+        function checkOverlap() {
+            floatingItems.forEach((item) => {
+                const itemRect = item.getBoundingClientRect();
+
+                // Check if the item overlaps with the hero section
+                const isOverlapping =
+                    itemRect.top < heroRect.bottom &&
+                    itemRect.bottom > heroRect.top &&
+                    itemRect.left < heroRect.right &&
+                    itemRect.right > heroRect.left;
+
+                // Add or remove the "overlapping" class based on overlap
+                if (isOverlapping) {
+                    item.classList.add('overlapping');
+                } else {
+                    item.classList.remove('overlapping');
+                }
+            });
+        }
+
+        // Run checkOverlap on page load and on scroll/resize
+        checkOverlap();
+        window.addEventListener('scroll', checkOverlap);
+        window.addEventListener('resize', () => {
+            // Update heroRect dimensions on resize
+            heroRect = heroSection.getBoundingClientRect();
+            checkOverlap();
+        });
+    });
+    </script>
+</body>
+</html>
