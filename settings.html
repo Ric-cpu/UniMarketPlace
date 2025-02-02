@@ -1,0 +1,24 @@
+// Update password change handler
+document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    fetch('handlers/change_password.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('success', 'Success!', 'Password changed successfully');
+            this.reset();
+        } else {
+            showNotification('error', 'Error', data.error || 'Failed to change password');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('error', 'Error', 'Failed to change password');
+    });
+}); 

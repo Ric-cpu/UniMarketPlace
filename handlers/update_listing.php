@@ -2,76 +2,89 @@
 session_start();
 require_once '../db_connect.php';
 
+header('Content-Type: application/json');
+
 if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
     echo json_encode(['success' => false, 'error' => 'Not authenticated']);
     exit();
 }
 
 try {
-    // Validate input
-    if (!isset($_POST['id']) || !isset($_POST['name']) || !isset($_POST['description']) || !isset($_POST['price'])) {
-        throw new Exception('Missing required fields');
+    if (!isset($_POST['id'])) {
+        throw new Exception('Missing listing ID');
     }
 
-    // Verify ownership
+    $pdo->beginTransaction();
+
+    // First, verify the listing belongs to the user
     $stmt = $pdo->prepare("SELECT user_id FROM items WHERE id = ?");
     $stmt->execute([$_POST['id']]);
     $item = $stmt->fetch();
 
     if (!$item || $item['user_id'] != $_SESSION['user_id']) {
-        throw new Exception('Unauthorized');
+        throw new Exception('Unauthorized access to this listing');
     }
 
     // Handle image upload if provided
     $image_path = null;
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-        $upload_dir = '../uploads/';
+        $upload_dir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR;
+        
         if (!file_exists($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }
 
         $file_extension = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
-        $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
-
-        if (!in_array($file_extension, $allowed_types)) {
-            throw new Exception('Invalid file type');
-        }
-
         $new_filename = uniqid() . '.' . $file_extension;
-        $image_path = 'uploads/' . $new_filename;
+        $upload_path = $upload_dir . $new_filename;
 
-        if (!move_uploaded_file($_FILES['image']['tmp_name'], '../' . $image_path)) {
-            throw new Exception('Failed to upload image');
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_path)) {
+            $image_path = 'uploads/' . $new_filename;
         }
     }
 
-    // Update item
-    $query = "UPDATE items SET name = ?, description = ?, price = ?, category = ?";
-    $params = [
-        $_POST['name'],
-        $_POST['description'],
-        floatval($_POST['price']),
-        $_POST['category']
-    ];
+    // Update item details
+    $sql = "UPDATE items SET name = ?, price = ?, description = ?";
+    $params = [$_POST['name'], $_POST['price'], $_POST['description']];
 
     if ($image_path) {
-        $query .= ", image = ?";
+        $sql .= ", image = ?";
         $params[] = $image_path;
     }
 
-    $query .= " WHERE id = ? AND user_id = ?";
+    $sql .= " WHERE id = ?";
     $params[] = $_POST['id'];
-    $params[] = $_SESSION['user_id'];
 
-    $stmt = $pdo->prepare($query);
+    $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
 
-    echo json_encode(['success' => true]);
+    // Update category if provided
+    if (isset($_POST['category'])) {
+        // First delete existing category
+        $stmt = $pdo->prepare("DELETE FROM item_categories WHERE item_id = ?");
+        $stmt->execute([$_POST['id']]);
+
+        // Insert new category
+        $stmt = $pdo->prepare("INSERT INTO item_categories (item_id, category) VALUES (?, ?)");
+        $stmt->execute([$_POST['id'], $_POST['category']]);
+    }
+
+    $pdo->commit();
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'Listing updated successfully'
+    ]);
 
 } catch (Exception $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    
     error_log("Error in update_listing.php: " . $e->getMessage());
-    http_response_code(500);
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    echo json_encode([
+        'success' => false,
+        'error' => $e->getMessage()
+    ]);
 }
 ?> 

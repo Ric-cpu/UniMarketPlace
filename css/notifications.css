@@ -1,0 +1,21 @@
+#notification-container {
+    pointer-events: none;
+}
+
+#notification-container > div {
+    transform: translateY(-20px);
+    opacity: 0;
+    animation: slideDown 0.5s forwards;
+}
+
+@keyframes slideDown {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Make links clickable if needed */
+#notification-container wa-callout {
+    pointer-events: auto;
+} 

@@ -6,6 +6,11 @@
     <title>View Item - Student Marketplace</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/notifications.css">
+    <link rel="stylesheet" href="https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/styles/themes/default.css" />
+<link rel="stylesheet" href="https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/styles/webawesome.css" />
+<script type="module" src="https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/webawesome.loader.js"></script>
+
     <style>
         .item-image {
             max-height: 400px;
@@ -20,6 +25,19 @@
             font-size: 1.5rem;
             color: #28a745;
             font-weight: bold;
+        }
+        .carousel-control-prev, .carousel-control-next {
+            background-color: rgba(0, 0, 0, 0.3);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .carousel-item img {
+            max-height: 400px;
+            object-fit: contain;
+            width: 100%;
         }
     </style>
 </head>
@@ -87,7 +105,19 @@
                     </ol>
                 </nav>
                 <div class="card">
-                    <img id="itemImage" src="" class="card-img-top item-image" alt="Item Image">
+                    <div id="itemImageCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner" id="carouselInner">
+                            <!-- Images will be inserted here -->
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#itemImageCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#itemImageCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
                     <div class="card-body">
                         <h2 id="itemName" class="card-title mb-3"></h2>
                         <div class="price-tag mb-4">£<span id="itemPrice"></span></div>
@@ -147,11 +177,27 @@
                     if (data.success) {
                         const item = data.item;
                         
+                        // Update carousel with images
+                        const carouselInner = document.getElementById('carouselInner');
+                        if (item.images && item.images.length > 0) {
+                            carouselInner.innerHTML = item.images.map((image, index) => `
+                                <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                    <img src="${image}" class="d-block w-100" alt="${item.name} - Image ${index + 1}">
+                                </div>
+                            `).join('');
+                        } else {
+                            // Fallback for items with no images
+                            carouselInner.innerHTML = `
+                                <div class="carousel-item active">
+                                    <img src="placeholder.jpg" class="d-block w-100" alt="No image available">
+                                </div>
+                            `;
+                        }
+                        
                         // Update item details
                         document.getElementById('itemName').textContent = item.name;
                         document.getElementById('itemPrice').textContent = parseFloat(item.price).toFixed(2);
                         document.getElementById('itemDescription').textContent = item.description;
-                        document.getElementById('itemImage').src = item.image;
                         document.getElementById('itemDate').textContent = formatDate(item.created_at);
                         document.getElementById('itemCategory').textContent = item.category || 'Uncategorized';
                         
@@ -182,5 +228,6 @@
         // Load details when page loads
         document.addEventListener('DOMContentLoaded', loadItemDetails);
     </script>
+    <script src="js/notifications.js"></script>
 </body>
 </html> 

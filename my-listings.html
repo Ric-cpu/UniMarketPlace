@@ -6,6 +6,11 @@
     <title>My Listings - Student Marketplace</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/notifications.css">
+    <link rel="stylesheet" href="https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/styles/themes/default.css" />
+<link rel="stylesheet" href="https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/styles/webawesome.css" />
+<script type="module" src="https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/webawesome.loader.js"></script>
+
     <style>
         .navbar-brand {
             font-size: 1.5rem;
@@ -325,31 +330,28 @@
         }
 
         function deleteListing(itemId) {
-            currentItemId = itemId;
-            deleteModal.show();
-        }
-
-        function confirmDelete() {
-            fetch('handlers/delete_listing.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ id: currentItemId })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    deleteModal.hide();
-                    loadMyListings();
-                } else {
-                    alert('Error deleting listing: ' + data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error deleting listing');
-            });
+            if (confirm('Are you sure you want to delete this listing?')) {
+                fetch('handlers/delete_listing.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: itemId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('success', 'Success!', 'Listing deleted successfully');
+                        loadMyListings();
+                    } else {
+                        showNotification('error', 'Error', data.error || 'Failed to delete listing');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('error', 'Error', 'Failed to delete listing');
+                });
+            }
         }
 
         // Initial load
@@ -358,5 +360,6 @@
             loadMyListings();
         });
     </script>
+    <script src="js/notifications.js"></script>
 </body>
 </html> 
