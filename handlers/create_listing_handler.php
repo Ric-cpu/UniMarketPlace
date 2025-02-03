@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception('No valid images uploaded');
         }
 
-        // Insert main item record with first image as primary
+        // Insert main item record
         $stmt = $pdo->prepare("
             INSERT INTO items (user_id, name, price, description, image, created_at)
             VALUES (?, ?, ?, ?, ?, NOW())
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $item_id = $pdo->lastInsertId();
 
-        // Insert category
+        // Insert category into item_categories table
         $stmt = $pdo->prepare("
             INSERT INTO item_categories (item_id, category)
             VALUES (?, ?)

@@ -9,29 +9,49 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 try {
-    // Get JSON data
-    $input = json_decode(file_get_contents('php://input'), true);
-    
-    // Debug logging
-    error_log("Received message data: " . json_encode($input));
-
     // Validate required fields
-    if (!isset($input['receiver_id']) || !isset($input['item_id']) || !isset($input['message'])) {
+    if (!isset($_POST['receiver_id']) || !isset($_POST['item_id'])) {
         throw new Exception('Missing required fields');
     }
 
-    // Convert to integers
-    $receiver_id = (int)$input['receiver_id'];
-    $item_id = (int)$input['item_id'];
-    $message = trim($input['message']);
+    $receiver_id = (int)$_POST['receiver_id'];
+    $item_id = (int)$_POST['item_id'];
+    $message = trim($_POST['message'] ?? '');
+    $attachment_path = null;
 
-    // Additional validation
-    if ($receiver_id <= 0 || $item_id <= 0 || empty($message)) {
-        throw new Exception('Invalid input data');
+    // Handle image upload
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+        $file_type = $_FILES['image']['type'];
+        
+        if (!in_array($file_type, $allowed_types)) {
+            throw new Exception('Invalid file type. Only JPEG, PNG and GIF are allowed.');
+        }
+        
+        if ($_FILES['image']['size'] > 5 * 1024 * 1024) { // 5MB limit
+            throw new Exception('File size too large. Maximum size is 5MB.');
+        }
+
+        $upload_dir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR;
+        if (!file_exists($upload_dir)) {
+            mkdir($upload_dir, 0777, true);
+        }
+
+        $file_extension = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+        $new_filename = uniqid() . '.' . $file_extension;
+        $upload_path = $upload_dir . $new_filename;
+
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_path)) {
+            $attachment_path = 'uploads/' . $new_filename;
+        } else {
+            throw new Exception('Failed to upload image');
+        }
     }
 
-    // Debug logging
-    error_log("Sending message: sender_id={$_SESSION['user_id']}, receiver_id={$receiver_id}, item_id={$item_id}");
+    // Require either a message or an image
+    if (empty($message) && !$attachment_path) {
+        throw new Exception('Message or image is required');
+    }
 
     $stmt = $pdo->prepare("
         INSERT INTO messages (
@@ -39,25 +59,22 @@ try {
             receiver_id,
             item_id,
             message,
+            attachment,
             created_at
-        ) VALUES (?, ?, ?, ?, NOW())
+        ) VALUES (?, ?, ?, ?, ?, NOW())
     ");
 
     $stmt->execute([
         $_SESSION['user_id'],
         $receiver_id,
         $item_id,
-        $message
+        $message,
+        $attachment_path
     ]);
-
-    $message_id = $pdo->lastInsertId();
-    
-    // Debug logging
-    error_log("Message created with ID: " . $message_id);
 
     echo json_encode([
         'success' => true,
-        'message_id' => $message_id
+        'message_id' => $pdo->lastInsertId()
     ]);
 
 } catch (Exception $e) {

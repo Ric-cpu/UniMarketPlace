@@ -1,0 +1,133 @@
+/* Chat Icon */
+#chat-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+/* Chat Window */
+#chat-window {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 325px;
+    height: 400px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    z-index: 1000;
+}
+
+/* Chat Header */
+#chat-header {
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#chat-header button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Chat Body */
+#chat-body {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    background-color: #f9f9f9;
+}
+
+/* Chat Messages */
+#chat-messages {
+    display: flex;
+    flex-direction: column;
+}
+
+.message {
+    margin: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 80%;
+}
+
+.user-message {
+    align-self: flex-end;
+    background-color: #007bff;
+    color: #fff;
+}
+
+.bot-message {
+    align-self: flex-start;
+    background-color: #e0e0e0;
+    color: #000;
+}
+
+/* Chat Input */
+#chat-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+    background-color: #fff;
+    align-items: center;
+}
+
+#chat-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+#chat-input button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Upload Icon */
+#upload-label {
+    cursor: pointer;
+    padding: 5px 10px;
+    color: #007bff;
+}
+
+#upload-label:hover {
+    color: #0056b3;
+}
+
+
+.message img {
+    max-width: 200px;
+    border-radius: 8px;
+    margin-top: 5px;
+}
+
+#image-preview-container {
+    margin: 10px 0;
+    text-align: center;
+    display: none;
+}
+
+#image-preview {
+    max-width: 200px;
+    border-radius: 8px;
+}
+

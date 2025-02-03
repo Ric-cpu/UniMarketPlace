@@ -10,23 +10,20 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 try {
-    // Get all categories from the categories table
-    $stmt = $pdo->prepare("SELECT category FROM categories ORDER BY category ASC");
-    $stmt->execute();
+    // Get distinct categories from item_categories table
+    $stmt = $pdo->query("SELECT DISTINCT category FROM item_categories ORDER BY category ASC");
     $categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-    // Debug log
-    error_log("Found categories: " . print_r($categories, true));
 
     echo json_encode([
         'success' => true,
         'categories' => $categories
     ]);
+
 } catch (Exception $e) {
     error_log("Error in get_categories.php: " . $e->getMessage());
     echo json_encode([
         'success' => false,
-        'error' => $e->getMessage()
+        'error' => 'Failed to fetch categories'
     ]);
 }
 ?> 

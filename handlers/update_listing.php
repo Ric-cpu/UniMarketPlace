@@ -43,9 +43,9 @@ try {
         }
     }
 
-    // Update item details
-    $sql = "UPDATE items SET name = ?, price = ?, description = ?";
-    $params = [$_POST['name'], $_POST['price'], $_POST['description']];
+    // Update item details including category
+    $sql = "UPDATE items SET name = ?, price = ?, description = ?, categories = ?";
+    $params = [$_POST['name'], $_POST['price'], $_POST['description'], $_POST['category'] ?? 'Uncategorized'];
 
     if ($image_path) {
         $sql .= ", image = ?";
@@ -57,17 +57,6 @@ try {
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-
-    // Update category if provided
-    if (isset($_POST['category'])) {
-        // First delete existing category
-        $stmt = $pdo->prepare("DELETE FROM item_categories WHERE item_id = ?");
-        $stmt->execute([$_POST['id']]);
-
-        // Insert new category
-        $stmt = $pdo->prepare("INSERT INTO item_categories (item_id, category) VALUES (?, ?)");
-        $stmt->execute([$_POST['id'], $_POST['category']]);
-    }
 
     $pdo->commit();
 

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace Chatbot</title>
+    
+    <link rel="stylesheet" href="ChatbotStyle.css"> <!-- Fixed CSS reference -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Chat Icon -->
+    <div id="chat-icon" onclick="toggleChat()">
+        <i class="fas fa-comment-dots" style="font-size: 50px; color: #007bff;"></i>
+    </div>
+
+
+</head>
+<body>
+
+    <!-- Chat Window -->
+<div id="chat-window">
+    <div id="chat-header">
+        <span>Chat with Us</span>
+        <button onclick="toggleChat()">×</button>
+    </div>
+    <div id="chat-body">
+        <div id="chat-messages"></div>
+    </div>
+    <div id="chat-input">
+        <!-- Image Upload Button (Hidden File Input) -->
+        <label for="image-input" id="upload-label">
+            <i class="fas fa-upload" id="upload-icon"></i>
+        </label>
+        <input type="file" id="image-input" accept="image/*" style="display: none;">
+        
+        <!-- Text Input -->
+        <input type="text" id="user-input" placeholder="Type a message...">
+        
+        <!-- Send Button -->
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    
+    <div id="image-preview-container" style="display: none;">
+        <img id="image-preview" style="max-width: 100%; border-radius: 5px;">
+    </div>
+    
+</div>
+
+
+    <script src="chatbot.js"></script> <!-- Fixed JS reference -->
+</body>
+</html>

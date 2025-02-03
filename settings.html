@@ -1,24 +1,167 @@
-// Update password change handler
-document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    
-    fetch('handlers/change_password.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showNotification('success', 'Success!', 'Password changed successfully');
-            this.reset();
-        } else {
-            showNotification('error', 'Error', data.error || 'Failed to change password');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Student Marketplace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/notifications.css">
+    <link rel="stylesheet" href="https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/styles/themes/default.css" />
+    <link rel="stylesheet" href="https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/styles/webawesome.css" />
+    <script type="module" src="https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/webawesome.loader.js"></script>
+</head>
+<body>
+    <style>
+        .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #007bff;
+    } 
+</style>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="dashboard.html">Student Marketplace</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="my-listings.html">My Listings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="messages.html">Messages</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="settings.html">Settings</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <a href="handlers/logout_handler.php" class="btn btn-outline-danger">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0">Account Settings</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Change Password Form -->
+                        <h4 class="mb-4">Change Password</h4>
+                        <form id="changePasswordForm">
+                            <div class="mb-3">
+                                <label for="currentPassword" class="form-label">Current Password</label>
+                                <input type="password" class="form-control" id="currentPassword" name="current_password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="newPassword" class="form-label">New Password</label>
+                                <input type="password" class="form-control" id="newPassword" name="new_password" required>
+                                <div class="form-text">Password must be at least 8 characters long</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirm_password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-key"></i> Change Password
+                            </button>
+                        </form>
+
+                        <hr class="my-4">
+
+                        <!-- Delete Account Section -->
+                        <h4 class="mb-4 text-danger">Delete Account</h4>
+                        <p class="text-muted">
+                            Warning: This action cannot be undone. All your listings and messages will be permanently deleted.
+                        </p>
+                        <button type="button" class="btn btn-danger" onclick="confirmDeleteAccount()">
+                            <i class="fas fa-user-times"></i> Delete Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/notifications.js"></script>
+    <script>
+        // Password change handler
+        document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validate password length
+            if (newPassword.length < 8) {
+                showNotification('error', 'Error', 'Password must be at least 8 characters long');
+                return;
+            }
+            
+            // Validate password match
+            if (newPassword !== confirmPassword) {
+                showNotification('error', 'Error', 'New passwords do not match');
+                return;
+            }
+            
+            const formData = new FormData(this);
+            
+            fetch('handlers/change_password.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('success', 'Success!', 'Password changed successfully');
+                    this.reset();
+                } else {
+                    showNotification('error', 'Error', data.error || 'Failed to change password');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('error', 'Error', 'Failed to change password');
+            });
+        });
+
+        // Delete account handler
+        function confirmDeleteAccount() {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                fetch('handlers/delete_account.php', {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('success', 'Success', 'Account deleted successfully');
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 2000);
+                    } else {
+                        showNotification('error', 'Error', data.error || 'Failed to delete account');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('error', 'Error', 'Failed to delete account');
+                });
+            }
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('error', 'Error', 'Failed to change password');
-    });
-}); 
+    </script>
+</body>
+</html>
