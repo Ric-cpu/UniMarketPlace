@@ -114,6 +114,22 @@ if (isset($_SESSION['user_id'])) {
             z-index: 2;
             background: rgba(255, 255, 255, 0.9) !important;
         }
+        /* Add to your existing style section */
+    #chat-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+    z-index: 1000;
+    }
+
+    #chat-window {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    z-index: 1000;
+    display: none;
+    }
     </style>
 </head>
 <body>
@@ -209,5 +225,32 @@ if (isset($_SESSION['user_id'])) {
         });
     </script>
     <script src="js/notifications.js"></script>
+    <!-- Add these in the <head> section, after your existing stylesheets -->
+<link rel="stylesheet" href="ChatbotStyle.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Add these just before the closing </body> tag -->
+<!-- Chat Icon -->
+<div id="chat-icon" onclick="toggleChat()">
+    <i class="fas fa-comment-dots" style="font-size: 50px; color: #007bff;"></i>
+</div>
+
+<!-- Chat Window -->
+<div id="chat-window">
+    <div id="chat-header">
+        <span>Chat with Us</span>
+        <button onclick="toggleChat()">×</button>
+    </div>
+    <div id="chat-body">
+        <div id="chat-messages"></div>
+    </div>
+    <div id="chat-input">
+        <input type="text" id="user-input" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<!-- Add chatbot.js before the closing body tag -->
+<script src="chatbot.js"></script>
 </body>
 </html>
