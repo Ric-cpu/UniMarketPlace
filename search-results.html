@@ -12,6 +12,12 @@
 <script type="module" src="https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/webawesome.loader.js"></script>
 
     <style>
+
+            .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #007bff;
+        } 
         .listing-card {
             transition: transform 0.2s;
         }
@@ -124,7 +130,7 @@
     <script>
     // Get search query from URL
     const urlParams = new URLSearchParams(window.location.search);
-    const searchQuery = urlParams.get('q');
+    const searchQuery = urlParams.get('search');
 
     // Load categories as checkboxes
     function loadCategories() {
@@ -148,7 +154,10 @@
 
     // Load listings with filters
     function loadListings(page = 1) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get('search');
         const searchInput = document.getElementById('searchInput');
+        
         if (searchQuery && !searchInput.value) {
             searchInput.value = searchQuery;
         }
