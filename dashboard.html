@@ -6,17 +6,150 @@
     <title>Dashboard - Student Marketplace</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/notifications.css">
+    <!-- Chatbot styles -->
+<link rel="stylesheet" href="chatbot/ChatbotStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/styles/themes/default.css" />
 <link rel="stylesheet" href="https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/styles/webawesome.css" />
 <script type="module" src="https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/webawesome.loader.js"></script>
 
     <style>
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #007bff;
-        }
+        /* Navbar and Search Styles */
+.navbar {
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    padding: 0.8rem 0;
+}
+
+.navbar.sticky-top {
+    z-index: 1030;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #007bff !important;
+    padding: 0 1rem;
+}
+
+.nav-link {
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #007bff !important;
+}
+
+.nav-link.active {
+    color: #007bff !important;
+}
+
+/* Search Container Styles */
+.search-container {
+    max-width: 500px;
+    width: 100%;
+    margin: 0 1rem;
+}
+
+.search-input {
+    border-radius: 50px 0 0 50px !important;
+    border: 1px solid #dee2e6;
+    padding-left: 1.5rem;
+    height: 45px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-shadow: none !important;
+}
+
+.search-input:focus {
+    border-color: #007bff;
+}
+
+.search-button {
+    border-radius: 0 50px 50px 0 !important;
+    padding: 0 1.5rem;
+    height: 45px;
+    transition: all 0.3s ease;
+    border: 1px solid #dee2e6;
+    border-left: none;
+}
+
+.search-button:hover {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+/* Input Group Hover Effect */
+.input-group:hover .search-input {
+    border-color: #b8b8b8;
+}
+
+.input-group:hover .search-button {
+    border-color: #b8b8b8;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 991.98px) {
+    .search-container {
+        margin: 1rem 0;
+    }
+    
+    .navbar-nav {
+        margin: 1rem 0;
+    }
+}
+/* Chat input area with image upload */
+#chat-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+    background-color: #fff;
+    align-items: center;
+    gap: 8px;
+}
+
+#upload-label {
+    cursor: pointer;
+    padding: 5px;
+    color: #007bff;
+    display: flex;
+    align-items: center;
+}
+
+#upload-label:hover {
+    color: #0056b3;
+}
+
+#upload-label i {
+    font-size: 1.2rem;
+}
+
+#image-preview-container {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+}
+
+#image-preview {
+    max-width: 150px;
+    max-height: 150px;
+    display: block;
+    margin: 0 auto;
+    border-radius: 4px;
+}
+
+body {
+    padding-top: 10px;
+}
+
         .listing-card {
             transition: transform 0.2s;
         }
@@ -71,6 +204,164 @@
             font-weight: 600;
         }
 
+/* Sticky Header Styles */
+.sticky-top {
+    z-index: 1030;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.navbar {
+    background-color: #ffffff !important;
+    padding: 0.8rem 0;
+    margin: 0;
+    border: none;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #007bff !important;
+}
+
+.nav-link {
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #007bff !important;
+}
+
+.nav-link.active {
+    color: #007bff !important;
+}
+
+.search-section {
+    background-color: #ffffff !important;
+    border: none;
+}
+
+.input-group .form-control:focus,
+.input-group .form-select:focus {
+    box-shadow: none;
+    border-color: #007bff;
+}
+
+/* Add some padding to the main content */
+.main-content {
+    padding-top: 20px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 991.98px) {
+    .search-section .row > div {
+        margin-bottom: 1rem;
+    }
+    .search-section .row > div:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* Add these to your existing styles */
+.search-section .d-flex {
+    gap: 10px !important;
+}
+
+.search-section .form-control,
+.search-section .form-select,
+.search-section .btn {
+    height: 42px;
+}
+
+.search-section .form-select {
+    flex-shrink: 0;
+}
+
+/* Mobile responsiveness for search section */
+@media (max-width: 768px) {
+    .search-section .d-flex {
+        flex-direction: column;
+    }
+    
+    .search-section .form-select {
+        width: 100% !important;
+    }
+    
+    .search-section .btn {
+        width: 100%;
+    }
+}
+
+
+/*Categories Section Styles*/
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    color: rgb(0, 0, 0);
+    text_align: center;
+    margin: 0;
+    padding: 20px
+}
+
+.categories-section {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+.categories-section h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.categories-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.category-card {
+    background-color: #fffefe;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    width: 180px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+
+
+.category-card i {
+    font-size: 40px;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.category-card p {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.see-all {
+    display: block;
+    margin-top: 20px;
+    color: #000000;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.see-all:hover {
+    color: #ffffff;
+}
+
+
+
     </style>
 
 
@@ -90,67 +381,94 @@
             });
     </script>
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="dashboard.html">Student Marketplace</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="dashboard.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="my-listings.html">My Listings</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="messages.html">Messages</a>
-                    </li>
-                </ul>
-                <div class="d-flex align-items-center">
-                    <span class="me-3">Welcome, <span id="userFirstName"></span>!</span>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="profile.html">Profile</a></li>
-                            <li><a class="dropdown-item" href="settings.html">Settings</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" onclick="handleLogout(); return false;">Logout</a></li>
-                        </ul>
+    <!-- Sticky Header Container -->
+    <div class="sticky-top">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <!-- Logo -->
+                <a class="navbar-brand" href="dashboard.html">Student Marketplace</a>
+                
+                <!-- Toggler for mobile -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <!-- Navigation Links -->
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="dashboard.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="my-listings.html">My Listings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="messages.html">Messages</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="settings.html">Settings</a>
+                        </li>
+                    </ul>
+
+                    <!-- Right-side buttons -->
+                    <div class="d-flex align-items-center gap-3">
+                        <a href="create-listing.html" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Create Listing
+                        </a>
+                        <a href="handlers/logout.php" class="btn btn-outline-danger">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-    </nav>
+        </nav>
 
-    <!-- Main Content -->
-    <div class="container py-4">
-        <!-- Search and Filters -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="input-group">
+        <!-- Search Bar Section -->
+        <div class="search-section bg-light">
+            <div class="container py-3">
+                <div class="d-flex gap-2">
                     <input type="text" id="searchInput" class="form-control" placeholder="Search listings...">
-                    <button class="btn btn-outline-secondary" type="button" id="searchButton">
-                        <i class="fas fa-search"></i>
+                    <select class="form-select" id="categoryFilter" style="width: auto; min-width: 150px;">
+                        <option value="">All Categories</option>
+                    </select>
+                    <button class="btn btn-primary" type="button" id="searchButton">
+                        <i class="fas fa-search"></i> Search
                     </button>
                 </div>
             </div>
-            <div class="col-md-3">
-                <select class="form-select" id="categoryFilter">
-                    <option value="">All Categories</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <a href="create-listing.html" class="btn btn-primary w-100">
-                    <i class="fas fa-plus"></i> Create Listing
-                </a>
-            </div>
         </div>
+    </div>
 
+<!--Categories Section -->
+
+<section class="categories-section">
+    <h2>What would you like to find?</h2>
+    <div class="categories-container">
+        <div class="category-card">
+            <i class="fas fa-tshirt"></i>
+            <p>Clothing</p>
+        </div>
+        <div class="category-card">
+            <i class="fas fa-laptop"></i>
+            <p>Electronics</p>
+        </div>
+        <div class="category-card">
+            <i class="fas fa-couch"></i>
+            <p>Furniture</p>
+        </div>
+        <div class="category-card">
+            <i class="fas fa-pencil-alt"></i>
+            <p>Stationery</p>
+        </div>
+    </div>
+</section>
+
+
+
+
+    <!-- Main Content -->
+    <div class="container py-4">
         <!-- Recent Listings Section -->
         <div class="mb-4">
             <h2 class="mb-3">Recent Listings</h2>
@@ -274,12 +592,31 @@
         }
 
         // Event Listeners
-        document.getElementById('searchButton').addEventListener('click', () => loadListings(1));
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                loadListings(1);
+        // Search functionality
+    document.getElementById('searchButton').addEventListener('click', performSearch);
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        performSearch();
             }
         });
+
+        function performSearch() {
+            const searchQuery = document.getElementById('searchInput').value.trim();
+            const selectedCategory = document.getElementById('categoryFilter').value;
+            
+            let searchParams = new URLSearchParams();
+            
+            if (searchQuery) {
+                searchParams.append('search', searchQuery);
+            }
+            
+            if (selectedCategory) {
+                searchParams.append('categories', selectedCategory);
+            }
+            
+            window.location.href = `search-results.html?${searchParams.toString()}`;
+        }
         document.getElementById('categoryFilter').addEventListener('change', () => loadListings(1));
 
         // Initial load
@@ -356,5 +693,38 @@
         }
     </script>
     <script src="js/notifications.js"></script>
+    <!-- Chat Icon -->
+<div id="chat-icon" onclick="toggleChat()">
+    <i class="fas fa-comment-dots" style="font-size: 50px; color: #007bff;"></i>
+</div>
+
+<!-- Chat Window -->
+<div id="chat-window">
+    <div id="chat-header">
+        <span>Chat with Us</span>
+        <button onclick="toggleChat()">×</button>
+    </div>
+    <div id="chat-body">
+        <div id="chat-messages"></div>
+    </div>
+        <div id="chat-input">
+        <!-- Image Upload Button -->
+        <label for="image-input" id="upload-label">
+            <i class="fas fa-image"></i>
+        </label>
+        <input type="file" id="image-input" accept="image/*" style="display: none;" onchange="previewImage(event)">
+        <!-- Image Preview Container -->
+        <div id="image-preview-container" style="display: none;">
+            <img id="image-preview" alt="Preview">
+        </div>
+
+        <!-- Text Input and Send Button -->
+        <input type="text" id="user-input" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<!-- Chatbot script -->
+<script src="chatbot/chatbot.js"></script>
 </body>
 </html>
