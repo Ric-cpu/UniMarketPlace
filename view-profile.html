@@ -176,8 +176,20 @@
             // Fetch user profile data
             fetch(`handlers/get_user_profile.php?username=${encodeURIComponent(username)}`)
                 .then(response => {
-                    console.log('Response:', response); // Debug log
-                    return response.json();
+                    console.log('Response status:', response.status); // Debug log
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text(); // Get the raw text first
+                })
+                .then(text => {
+                    console.log('Raw response:', text); // Debug log
+                    try {
+                        return JSON.parse(text); // Try to parse it as JSON
+                    } catch (e) {
+                        console.error('JSON parse error:', e);
+                        throw new Error('Invalid JSON response');
+                    }
                 })
                 .then(data => {
                     console.log('Profile data:', data); // Debug log
@@ -203,6 +215,8 @@
 
                         // Fetch user's listings
                         return fetch(`handlers/get_user_listings.php?user_id=${user.id}`);
+                    } else {
+                        throw new Error(data.error || 'Failed to load profile');
                     }
                 })
                 .then(response => response.json())
@@ -240,6 +254,9 @@
                 .catch(error => {
                     console.error('Error fetching profile:', error);
                     document.getElementById('userName').textContent = 'Error loading profile';
+                    document.getElementById('memberSince').textContent = '';
+                    document.getElementById('listingsCount').textContent = '0';
+                    document.getElementById('userRating').textContent = '';
                 });
         });
     </script>
