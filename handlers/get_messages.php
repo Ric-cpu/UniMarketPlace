@@ -43,24 +43,21 @@ try {
 
     // Get messages
     $stmt = $pdo->prepare("
-        SELECT 
-            m.*,
-            CASE WHEN m.sender_id = ? THEN 1 ELSE 0 END as is_sender
+        SELECT m.*, u.first_name as sender_name, u.id as sender_id, u.username as sender_username
         FROM messages m
-        WHERE m.item_id = ?
-        AND (
-            (m.sender_id = ? AND m.receiver_id = ?)
-            OR 
-            (m.sender_id = ? AND m.receiver_id = ?)
-        )
+        JOIN users u ON m.sender_id = u.id
+        WHERE (m.sender_id = ? AND m.receiver_id = ? AND m.item_id = ?)
+        OR (m.sender_id = ? AND m.receiver_id = ? AND m.item_id = ?)
         ORDER BY m.created_at ASC
     ");
 
     $stmt->execute([
         $current_user_id,
+        $other_user_id,
         $item_id,
-        $current_user_id, $other_user_id,
-        $other_user_id, $current_user_id
+        $other_user_id,
+        $current_user_id,
+        $item_id
     ]);
 
     $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -89,6 +89,91 @@
             font-size: 0.75rem;
             color: #6c757d;
         }
+        .message {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .user-avatar-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 32px;
+            margin: 0 auto;
+        }
+
+        .message-content {
+            flex-grow: 1;
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            word-wrap: break-word;
+        }
+
+        .sent {
+            flex-direction: row-reverse;
+        }
+
+        .sent .message-content {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .sent .message-content small {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        .received .message-content {
+            background-color: #f8f9fa;
+        }
+
+        #profilePreviewModal .modal-content {
+            border-radius: 15px;
+        }
+
+        .user-details {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        /* Make sure message text is visible */
+        .message-content p {
+            margin: 0;
+            padding: 0;
+        }
+
+        .message-content small {
+            display: block;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -323,36 +408,10 @@
                                 </div>
                             `;
                         } else {
-                            data.messages.forEach(msg => {
-                                const div = document.createElement('div');
-                                div.className = `message-bubble ${msg.is_sender == 1 ? 'message-sent' : 'message-received'}`;
-                                
-                                let content = '<div class="message-content">';
-                                
-                                // Add image if present
-                                if (msg.attachment) {
-                                    content += `
-                                        <img src="${msg.attachment}" class="message-image mb-2" 
-                                             onclick="window.open(this.src, '_blank')" 
-                                             alt="Attached image">
-                                        <br>`;
-                                }
-                                
-                                // Add text message if present
-                                if (msg.message) {
-                                    content += `${msg.message}`;
-                                }
-                                
-                                content += `</div>
-                                    <div class="timestamp">${new Date(msg.created_at).toLocaleTimeString()}</div>`;
-                                
-                                div.innerHTML = content;
-                                messageHistory.appendChild(div);
-                            });
+                            data.messages.forEach(msg => displayMessage(msg, messageHistory));
                         }
                         messageHistory.scrollTop = messageHistory.scrollHeight;
                         
-                        // Update lastMessageId for new message checking
                         if (data.messages.length > 0) {
                             lastMessageId = data.messages[data.messages.length - 1].id;
                         }
@@ -470,79 +529,137 @@
     document.getElementById('imagePreview').classList.add('d-none');
 }
 
-// Update the message display function
+// Add this function to format messages with avatars
 function displayMessage(msg, messageHistory) {
+    console.log('Message data:', msg); // Debug log
+    
     const div = document.createElement('div');
-    div.className = `message-bubble ${msg.is_sender == 1 ? 'message-sent' : 'message-received'}`;
+    div.className = `message ${msg.is_sender == 1 ? 'sent' : 'received'}`;
     
-    let content = `<div class="message-content">`;
+    // Create avatar with link
+    const avatarLink = document.createElement('a');
+    if (msg.sender_username) {
+        avatarLink.href = `view-profile.html?username=${encodeURIComponent(msg.sender_username)}`;
+        console.log('Profile link created:', avatarLink.href); // Debug log
+    } else {
+        console.error('No username available for user:', msg.sender_id);
+    }
+    avatarLink.style.textDecoration = 'none';
     
-    // Add image if present
+    const avatarDiv = document.createElement('div');
+    avatarDiv.className = 'user-avatar';
+    const initials = getInitials(msg.sender_name || 'Unknown User');
+    avatarDiv.innerHTML = initials;
+    avatarDiv.style.backgroundColor = getAvatarColor(msg.sender_id);
+    
+    avatarLink.appendChild(avatarDiv);
+    
+    // Create message content
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'message-content';
+    
     if (msg.attachment) {
-        content += `
-            <img src="${msg.attachment}" class="message-image mb-2" 
-                 onclick="window.open(this.src, '_blank')" 
-                 alt="Attached image">
-            <br>`;
+        const img = document.createElement('img');
+        img.src = msg.attachment;
+        img.className = 'message-image mb-2';
+        img.onclick = () => window.open(img.src, '_blank');
+        img.alt = 'Attached image';
+        contentDiv.appendChild(img);
     }
     
-    // Add text message
     if (msg.message) {
-        content += `${msg.message}`;
+        const messageText = document.createElement('p');
+        messageText.textContent = msg.message;
+        contentDiv.appendChild(messageText);
     }
     
-    content += `</div>
-        <div class="timestamp">${new Date(msg.created_at).toLocaleTimeString()}</div>`;
+    const timestamp = document.createElement('small');
+    timestamp.className = 'text-muted';
+    timestamp.textContent = new Date(msg.created_at).toLocaleTimeString();
+    contentDiv.appendChild(timestamp);
     
-    div.innerHTML = content;
+    if (msg.is_sender == 1) {
+        div.appendChild(contentDiv);
+        div.appendChild(avatarLink);
+    } else {
+        div.appendChild(avatarLink);
+        div.appendChild(contentDiv);
+    }
+    
     messageHistory.appendChild(div);
 }
 
-// Update the send message function
-document.getElementById('messageForm').onsubmit = function(e) {
-    e.preventDefault();
-    if (!currentConversation) {
-        console.error('No active conversation');
-        return;
-    }
+// Helper function to get user initials
+function getInitials(name) {
+    return name
+        .split(' ')
+        .map(word => word[0])
+        .join('')
+        .toUpperCase();
+}
 
-    const input = document.getElementById('messageInput');
-    const imageInput = document.getElementById('imageInput');
-    const message = input.value.trim();
-    const imageFile = imageInput.files[0];
-    
-    if (!message && !imageFile) return;
+// Helper function to generate consistent avatar colors
+function getAvatarColor(userId) {
+    const colors = [
+        '#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#34495e',
+        '#16a085', '#27ae60', '#2980b9', '#8e44ad', '#2c3e50',
+        '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6', '#f39c12',
+        '#d35400', '#c0392b', '#7f8c8d'
+    ];
+    return colors[userId % colors.length];
+}
 
-    const formData = new FormData();
-    formData.append('receiver_id', currentConversation.userId);
-    formData.append('item_id', currentConversation.itemId);
-    formData.append('message', message);
-    
-    if (imageFile) {
-        formData.append('image', imageFile);
-    }
-
-    fetch('handlers/send_message.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            input.value = '';
-            imageInput.value = '';
-            removeImagePreview();
-            loadMessages(currentConversation.userId, currentConversation.itemId);
-        } else {
-            showNotification('error', 'Error', data.error || 'Failed to send message');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('error', 'Error', 'Failed to send message');
-    });
-};
+// Function to show profile preview
+function showProfilePreview(userId) {
+    fetch(`handlers/get_user_profile.php?user_id=${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const user = data.user;
+                document.getElementById('profileName').textContent = user.first_name + ' ' + user.last_name;
+                document.getElementById('profileJoinDate').textContent = new Date(user.created_at).toLocaleDateString();
+                document.getElementById('profileListingsCount').textContent = user.listings_count;
+                document.getElementById('profileRating').textContent = parseFloat(user.rating).toFixed(1) + '/5';
+                document.getElementById('viewProfileBtn').href = `profile.html?user_id=${userId}`;
+                
+                const avatarDiv = document.querySelector('.user-avatar-large');
+                avatarDiv.innerHTML = getInitials(user.first_name + ' ' + user.last_name);
+                avatarDiv.style.backgroundColor = getAvatarColor(userId);
+                
+                new bootstrap.Modal(document.getElementById('profilePreviewModal')).show();
+            }
+        })
+        .catch(error => console.error('Error fetching profile:', error));
+}
     </script>
     <script src="js/notifications.js"></script>
+
+    <!-- Add this modal HTML at the bottom of your body tag -->
+    <div class="modal fade" id="profilePreviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">User Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <div class="user-avatar-large mb-2">
+                            <!-- Avatar will be inserted here -->
+                        </div>
+                        <h4 id="profileName"></h4>
+                    </div>
+                    <div class="user-details">
+                        <p><strong>Member Since:</strong> <span id="profileJoinDate"></span></p>
+                        <p><strong>Active Listings:</strong> <span id="profileListingsCount"></span></p>
+                        <p><strong>Rating:</strong> <span id="profileRating"></span></p>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="#" id="viewProfileBtn" class="btn btn-primary">View Full Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html> 
